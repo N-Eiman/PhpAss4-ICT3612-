@@ -1,0 +1,37 @@
+<?php
+/////////////////////////////Task 1(a) //////////////////////////
+$explanation = "
+1. Member Table
+- Entity: Members.
+- Attributes:
+  - MemberID (Primary Key): Unique identifier for each member.
+  - MemberName: Name of the member.
+  - MemberEmail: Email address of the member.
+
+2. Group Table
+- Entity: Group.
+- Attributes:
+  - GroupID (Primary Key): Unique identifier for each group.
+  - GroupName: Name of the group.
+  - GroupDescription: Description of the group.
+
+3. MemberGroup Table
+- Entity: Represents the relationship between members and groups (many-to-many relationship).
+- Attributes:
+  - MemberID (Foreign Key): References MemberID in the Member table.
+  - GroupID (Foreign Key): References GroupID in the Group table.
+  - JoiningDate: Date when the member joined the group.
+
+Primary and Foreign Keys:
+- Member Table:
+  - Primary Key: MemberID
+- Group Table:
+  - Primary Key: GroupID
+- MemberGroup Table:
+  - Primary Key: Combination of MemberID and GroupID
+  - Foreign Keys: MemberID (references Member table), GroupID (references Group table)
+";
+
+echo $explanation;
+
+?>

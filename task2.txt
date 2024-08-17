@@ -1,0 +1,42 @@
+<?php
+$host = 'your_host';
+$dbname = 'my_database';
+$username = 'your_username';
+$password = 'your_password';
+
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connected successfully<br>";
+
+    // Display Member table
+    echo "<h2>Member Table</h2>";
+    $stmt = $conn->query("SELECT * FROM Member");
+    echo "<table border='1'><tr><th>MemberID</th><th>MemberName</th><th>MemberEmail</th></tr>";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<tr><td>{$row['MemberID']}</td><td>{$row['MemberName']}</td><td>{$row['MemberEmail']}</td></tr>";
+    }
+    echo "</table>";
+
+    // Display Group table
+    echo "<h2>Group Table</h2>";
+    $stmt = $conn->query("SELECT * FROM `Group`");
+    echo "<table border='1'><tr><th>GroupID</th><th>GroupName</th><th>GroupDescription</th></tr>";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<tr><td>{$row['GroupID']}</td><td>{$row['GroupName']}</td><td>{$row['GroupDescription']}</td></tr>";
+    }
+    echo "</table>";
+
+    // Display MemberGroup table
+    echo "<h2>MemberGroup Table</h2>";
+    $stmt = $conn->query("SELECT * FROM MemberGroup");
+    echo "<table border='1'><tr><th>MemberID</th><th>GroupID</th><th>JoiningDate</th></tr>";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<tr><td>{$row['MemberID']}</td><td>{$row['GroupID']}</td><td>{$row['JoiningDate']}</td></tr>";
+    }
+    echo "</table>";
+
+} catch(PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+}
+?>

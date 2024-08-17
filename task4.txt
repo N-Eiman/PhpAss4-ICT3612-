@@ -1,0 +1,183 @@
+<?php
+// task4.php
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "olympiad_booking";
+
+//Register_School
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $school_name = $_POST['school_name'];
+    $school_address = $_POST['school_address'];
+    $school_contact = $_POST['school_contact'];
+    $username = $_POST['username'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO schools (school_name, school_address, school_contact, username, password)
+            VALUES ('$school_name', '$school_address', '$school_contact', '$username', '$password')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "School registered successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+
+$conn->close();
+
+//Register_learners
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $school_id = $_POST['school_id'];
+    $learner_name = $_POST['learner_name'];
+    $grade = $_POST['grade'];
+    $subjects = implode(',', $_POST['subjects']);
+
+    $sql = "INSERT INTO learners (school_id, learner_name, grade, subjects)
+            VALUES ('$school_id', '$learner_name', '$grade', '$subjects')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Learner registered successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+
+$conn->close();
+
+
+//Manage_learners
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$school_id = 1; // Example school ID
+
+$sql = "SELECT * FROM learners WHERE school_id = $school_id";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    echo "<h2>Registered Learners</h2>";
+    while($row = $result->fetch_assoc()) {
+        echo "ID: " . $row["learner_id"]. " - Name: " . $row["learner_name"]. " - Grade: " . $row["grade"]. " - Subjects: " . $row["subjects"]. "<br>";
+    }
+} else {
+    echo "0 results";
+}
+
+$conn->close();
+
+
+//Modify and Delete Learners
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['modify'])) {
+        $learner_id = $_POST['learner_id'];
+        $learner_name = $_POST['learner_name'];
+        $grade = $_POST['grade'];
+        $subjects = $_POST['subjects'];
+
+        $sql = "UPDATE learners SET learner_name='$learner_name', grade='$grade', subjects='$subjects' WHERE learner_id='$learner_id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "Learner updated successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    } elseif (isset($_POST['delete'])) {
+        $learner_id = $_POST['learner_id'];
+
+        $sql = "DELETE FROM learners WHERE learner_id='$learner_id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "Learner deleted successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
+}
+
+$conn->close();
+
+
+//Generate invoices
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$registration_fee = 30;
+$subject_fee = 20;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['individual'])) {
+        $learner_id = $_POST['learner_id'];
+
+        $sql = "SELECT * FROM learners WHERE learner_id='$learner_id'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $subjects = explode(',', $row['subjects']);
+            $total_fee = $registration_fee + (count($subjects) * $subject_fee);
+
+            echo "Invoice for Learner ID: " . $row['learner_id'] . "<br>";
+            echo "Name: " . $row['learner_name'] . "<br>";
+            echo "Grade: " . $row['grade'] . "<br>";
+            echo "Subjects: " . $row['subjects'] . "<br>";
+            echo "Total Fee: R" . $total_fee . "<br>";
+        } else {
+            echo "No learner found with ID: $learner_id";
+        }
+    } elseif (isset($_POST['school'])) {
+        $school_id = $_POST['school_id'];
+
+        $sql = "SELECT * FROM learners WHERE school_id='$school_id'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            $total_fee = 0;
+            while($row = $result->fetch_assoc()) {
+                $subjects = explode(',', $row['subjects']);
+                $total_fee += $registration_fee + (count($subjects) * $subject_fee);
+            }
+
+            echo "Invoice for School ID: $school_id<br>";
+            echo "Total Fee: R" . $total_fee . "<br>";
+        } else {
+            echo "No learners found for School ID: $school_id";
+        }
+    }
+}
+
+$conn->close();
+?>

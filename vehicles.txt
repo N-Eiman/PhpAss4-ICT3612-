@@ -1,0 +1,5 @@
+License Number: BGS954GP, Make: Toyota, Series: Corolla
+License Number: ZFR326GP, Make: Volkswagen, Series: Polo
+License Number: XTR123GP, Make: Ford, Series: Fiesta
+License Number: LMN456GP, Make: Honda, Series: Civic
+License Number: QWE789GP, Make: BMW, Series: 3 Series
